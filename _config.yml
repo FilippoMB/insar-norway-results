@@ -1,0 +1,45 @@
+# --- BASIC SITE META ---
+title: InSAR Norway Machine Learning
+author: Filippo Maria Bianchi
+description: Results from the application of machine learning techniques to InSAR data in Norway
+url: "https://filippomb.github.io"
+baseurl: "/insar-norway-results"
+
+# --- THEME ---
+remote_theme: mmistakes/minimal-mistakes
+minimal_mistakes_skin: "contrast"
+
+# --- FAVICON ---
+favicon: "/assets/figs/favicon.svg"
+
+# --- MATHJAX SCRIPTS ---
+head_scripts:
+  - /assets/js/mathjax_config.js
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js
+
+# --- PLUGINS ---
+plugins:
+  - jekyll-include-cache
+
+markdown: kramdown
+kramdown:
+  math_engine: mathjax
+
+# --- COLLECTIONS ---
+collections:
+  pages:
+    output: true
+    permalink: /:path/
+
+# --- DEFAULTS ---
+defaults:
+  - scope:
+      path: ""
+      type: pages
+    values:
+      layout: single
+      toc: true
+      toc_label: "Contents"
+      toc_sticky: true
+      mathjax: true
+      author_profile: false

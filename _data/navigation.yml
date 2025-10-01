@@ -1,0 +1,24 @@
+main:
+  - title: Home
+    url: /
+  - title: Anomaly Detection
+    url: /anomaly-detection/
+    children:
+      - title: Autoencoder
+        url: /anomaly-detection/autoencoder/
+      - title: Graph Autoencoder
+        url: /anomaly-detection/graph-autoencoder/
+      - title: RANSAC Baseline
+        url: /anomaly-detection/ransac/
+  - title: Clustering
+    url: /clustering/
+    children:
+      - title: Batched K-means
+        url: /clustering/batched-kmeans/
+      - title: GNN-based Clustering
+        url: /clustering/gnn-based-clustering/
+  - title: Semi-supervised Learning
+    url: /semi-supervised-learning/
+    children:
+      - title: Graph-based SSL Method
+        url: /semi-supervised-learning/ss-method/
