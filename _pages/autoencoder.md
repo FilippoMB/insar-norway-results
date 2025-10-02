@@ -5,40 +5,70 @@ parent: Anomaly Detection
 nav_order: 2
 ---
 
+**🛠️ WORK IN PROGRESS**
+
 ## Overview
 
-This report documents a reconstruction-based anomaly detector trained on regularly sampled InSAR time series. The intuition is that an autoencoder trained on nominal behaviour will struggle to reconstruct anomalous trajectories, producing large residuals that can be thresholded.
+This report documents a reconstruction-based anomaly detector trained on regularly sampled InSAR time series.
+The intuition is that an autoencoder will map the majority of the data to a compact latent space.
+Under the assumption that anomalous data are *rare*, these will not live in the same manifold in the latent space and, thus, when projected there will yield a high reconstruction error when decoded back.
+Such a reconstruction error can be used to determine which data point is anomalous and which is not.
 
-## Data Preparation
+![]({{ '/assets/figs/autoencoder/autoencoder-idea.png' | relative_url }})
 
-- **Input representation:** RANSAC regularised time series (see the [baseline report]({{ '/anomaly-detection/ransac/' | relative_url }})), normalised point-wise to zero mean and unit variance.
-- **Windowing:** Fixed-length windows spanning the full observation period. Missing months are backfilled with the RANSAC interpolant before normalisation.
-- **Train/validation split:** Hold out ROIs with known anomalies to validate threshold selection.
+## Time series Embedding with Reservoir Computing
 
-## Model Architecture
+As discussed in the [RANSAC section]({{ '/anomaly-detection/autoencoder/#time-series-embedding-with-reservoir-computing' | relative_url }}), the time series are first pre-processed by filling the missing months with the RANSAC interpolant.
 
-- Symmetric fully connected encoder/decoder with bottleneck dimension tuned via validation.
-- ReLU activations and batch normalisation to stabilise training.
-- Dropout applied in the bottleneck to encourage robust reconstructions.
+Afterwards, the time series are converted into *static vectors* using Reservoir Computing.
+The basic idea is that an untrained recurrent architectures, the **Reservoir**, processes the time series and returns a *vectorial representation* containing all the dynamical features of the time series.
 
-## Training Details
+![]({{ '/assets/figs/autoencoder/RC-overview.png' | relative_url }})
 
-- Optimiser: Adam (`lr = 1e-3`, weight decay `1e-5`).
-- Loss: Mean squared error between input and reconstruction.
-- Early stopping on validation reconstruction loss with patience of 25 epochs.
+The vectorial representation can be, for example, the last state of the Reservoir's states, a set of linear weights used to predict the next output or the next Reservoir's state.
+For more information about time series embeddings with RC, see [here](https://filippomb.github.io/python-time-series-handbook/notebooks/12/classification-clustering.html#time-series-embedding).
 
-## Results Snapshot
+## Model Architecture and training
 
-| Metric | Value | Notes |
-| --- | --- | --- |
-| AUROC | _TBD_ | Evaluate on labelled anomalies, if available. |
-| Precision@top1% | _TBD_ | Rank by reconstruction error across the catalogue. |
-| Mean reconstruction error | _TBD_ | Compare against RANSAC residuals. |
+We use a symmetric fully connected encoder/decoder with bottleneck dimension.
 
-Replace the placeholders with the actual numbers from experiments. Add plots showcasing reconstruction quality, per-point anomaly scores, and spatial maps highlighting flagged areas.
+```yaml
+architecture:
+  name: Simple-AE
+  type: AutoEncoder
+  hparams:
+    encoder_dims: [32, 16, 8, 4]
+    decoder_dims: [8, 16, 32]
+    activation: "ReLU"
+    batch_norm: True
+    dropout: 0.1
+```
 
-## Next Steps
+The model is trained to minimize the mse.
 
-1. Experiment with convolutional layers on the temporal axis to capture local trends.
-2. Compare fixed global thresholds vs. ROI-specific thresholds derived from score distributions.
-3. Integrate uncertainty estimates (e.g., Monte Carlo dropout) to modulate alerts by confidence.
+The input are the Reservoir embeddings without the static features.
+
+## Results
+
+### Lyngen
+
+Below, we plot the reconstruction error for each data point.
+
+![]({{ '/assets/figs/autoencoder/mse_Simple-AE_Lyngen-small.png' | relative_url }})
+
+Then, we select the points with the top $2.5\%$ reconstruction error and we plot them as triangles. The color-coding is given by the mean velocity of each time series.
+
+![]({{ '/assets/figs/autoencoder/mse_thresh_Simple-AE_Lyngen-small.png' | relative_url }})
+
+### Nordnes
+
+TODO
+
+### Svalbard
+
+TODO
+
+## Limitations
+
+- No relational/spatial information is considered.
+- Time series embedding is unsupervised and occur in a preprocessing step, which is agnostic of the downstream task (i.e., the AE reconstruction).

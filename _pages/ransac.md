@@ -16,13 +16,13 @@ We use RANSAC in two places:
 - To detect outliers by fitting linear models (lines or planes) and classifying as outliers the points that are not explained by any consensus set. This serves as a **baseline** to compare more advanced deep-learning based methods later on.
 - To resample irregular time series onto a regular grid by using the fitted line as a principled interpolant between observed timestamps.
 
-## Outlier Detection
+## Outlier Detection (Lyngen)
 
 ### Time-Series Line Fitting (point-wise)
 
 For each time series $y(t)$, fit a line $y = m \cdot t + c$ using RANSAC on the irregular acquisition times. Timestamps whose vertical residuals satisfy
 
-$$|y - (m \cdot t + c)| \leq \tau$$ 
+$$|y - (m \cdot t + c)| \leq \tau$$
 
 are considered inliers; others behave as outliers for that series. The slope/intercept summarise the local linear trend; large disagreements with OLS or unusually poor consensus highlight problematic series.
 
@@ -64,9 +64,19 @@ The results for the Nordnes ROI are reported below.
 
 ![]({{ '/assets/figs/ransac/Nordnes-iterative-sliding-win.png' | relative_url }})
 
+## Svalbard
+
+The Svalbard time series are not very linear and, thus, not well represented by the RANSAC fit.
+We only report the plane fitting with sliding windows below.
+
+![]({{ '/assets/figs/ransac/Svalbard-sliding-win.png' | relative_url }})
+
+![]({{ '/assets/figs/ransac/Svalbard-iterative-sliding-win.png' | relative_url }})
+
 ## Resampling Irregular Time Series
 
-To obtain better performance with the deep learning and clustering methods (to appear in the next reports), we transformed irregular time series into a regularly sampled series while preserving observed values and filling unobserved steps with a robust trend obtained from RANSAC fits. Without this procedure, there were large gaps in the time series that could create unwanted artefacts.
+To obtain better time series embedding using [Reservoir Computing]({{ '/anomaly-detection/autoencoder/#time-series-embedding-with-reservoir-computing' | relative_url }}), we first transformed irregular time series into a regularly sampled one by preserving observed values and filling unobserved steps with a robust trend obtained from RANSAC fits.
+Without this procedure, there were large gaps and irregular time samples in the time series, which could create unwanted artefacts.
 
 Procedure:
 
