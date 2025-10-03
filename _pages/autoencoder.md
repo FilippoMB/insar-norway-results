@@ -5,8 +5,6 @@ parent: Anomaly Detection
 nav_order: 2
 ---
 
-**🛠️ WORK IN PROGRESS**
-
 ## Overview
 
 This report documents a reconstruction-based anomaly detector trained on regularly sampled InSAR time series.
@@ -50,6 +48,12 @@ The input are the Reservoir embeddings without the static features.
 
 ## Results
 
+| Dataset | Train MAE | Test MAE |
+| --- | --- | --- |
+| Lyngen   | 0.108 | 0.109 |
+| Nordnes  | 0.108 | 0.109 |
+| Svalbard | 0.084 | 0.085 |
+
 ### Lyngen
 
 Below, we plot the reconstruction error for each data point.
@@ -62,11 +66,15 @@ Then, we select the points with the top $2.5\%$ reconstruction error and we plot
 
 ### Nordnes
 
-TODO
+![]({{ '/assets/figs/autoencoder/mse_Simple-AE_Nordnes.png' | relative_url }})
+
+![]({{ '/assets/figs/autoencoder/mse_thresh_Simple-AE_Nordnes.png' | relative_url }})
 
 ### Svalbard
 
-TODO
+![]({{ '/assets/figs/autoencoder/mse_Simple-AE_Svalbard-1.png' | relative_url }})
+
+![]({{ '/assets/figs/autoencoder/mse_thresh_Simple-AE_Svalbard-1.png' | relative_url }})
 
 ## Limitations
 

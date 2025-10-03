@@ -52,7 +52,9 @@ We fit planes $z = a \cdot x + b \cdot y + c$ where $x = \text{lat}$, $y = \text
 
 ![]({{ '/assets/figs/ransac/Lyngen-small-iterative-sliding-win.png' | relative_url }})
 
-## Nordnes
+## Other Results
+
+### Nordnes
 
 The results for the Nordnes ROI are reported below.
 
@@ -64,7 +66,7 @@ The results for the Nordnes ROI are reported below.
 
 ![]({{ '/assets/figs/ransac/Nordnes-iterative-sliding-win.png' | relative_url }})
 
-## Svalbard
+### Svalbard
 
 The Svalbard time series are not very linear and, thus, not well represented by the RANSAC fit.
 We only report the plane fitting with sliding windows below.
